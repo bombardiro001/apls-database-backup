@@ -23,10 +23,27 @@ jobs:
         with:
           version: latest
 
-      # Debug step (safe - hides password)
-      - name: Debug DB URL
+      # 🔎 DEBUG STEP (SAFE)
+      - name: Debug connection info (safe)
         run: |
+          echo "----- DEBUG START -----"
+          
+          # Mask password but show structure
           echo "$SUPABASE_DB_URL" | sed 's/:.*@/:****@/'
+
+          # Extract username
+          USERNAME=$(echo "$SUPABASE_DB_URL" | sed -E 's|postgresql://([^:]+):.*|\1|')
+          echo "USERNAME USED: $USERNAME"
+
+          # Extract host
+          HOST=$(echo "$SUPABASE_DB_URL" | sed -E 's|.*@([^:/]+).*|\1|')
+          echo "HOST USED: $HOST"
+
+          # Extract port
+          PORT=$(echo "$SUPABASE_DB_URL" | sed -E 's|.*:([0-9]+)/.*|\1|')
+          echo "PORT USED: $PORT"
+
+          echo "----- DEBUG END -----"
 
       - name: Create backup folder
         run: mkdir -p prisma/backups
